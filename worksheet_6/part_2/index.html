@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebGL Texture Modes</title>
+</head>
+<a href="javascript:history.back()">Go Back</a><br>
+<canvas id="gl-canvas"></canvas>
+<body>
+<br>
+<label for="wrapMode">Texture Wrapping Mode:</label>
+<select id="wrapMode">
+    <option value="REPEAT">Repeat</option>
+    <option value="CLAMP_TO_EDGE">Clamp to Edge</option>
+</select>
+
+<br><br>
+<label for="filterMode">Texture Filtering Mode:</label>
+<select id="filterMode">
+    <option value="NEAREST">Nearest</option>
+    <option value="LINEAR">Linear</option>
+    <option value="NEAREST_MIPMAP_NEAREST">Nearest Mipmap Nearest</option>
+    <option value="LINEAR_MIPMAP_NEAREST">Linear Mipmap Nearest</option>
+    <option value="NEAREST_MIPMAP_LINEAR">Nearest Mipmap Linear</option>
+    <option value="LINEAR_MIPMAP_LINEAR">Linear Mipmap Linear</option>
+</select>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec2 vTexCoord;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    varying vec2 fTexCoord;
+
+    void main() {
+        gl_Position = uProjectionMatrix * modelViewMatrix * vPosition;
+        fTexCoord = vTexCoord;
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    uniform sampler2D texture;
+    varying vec2 fTexCoord;
+
+    void main() {
+        gl_FragColor = texture2D(texture, fTexCoord);
+    }
+</script>
+
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>

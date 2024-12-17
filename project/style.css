@@ -1,0 +1,134 @@
+.popup {
+    overflow-x: auto;
+}
+ul {
+    list-style-type: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+li > img {
+    max-height: 100px;
+}
+img {
+    -webkit-user-drag: none;
+}
+canvas {
+    border: 1px solid black;
+}
+
+.buttons-container {
+    bottom: 15px;
+    position:absolute;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.buttons-container > ul > li > button {
+    border-radius: 8px;
+    border-width: 0;
+    cursor: pointer;
+    display: inline-block;
+    font-family: "Haas Grot Text R Web", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    list-style: none;
+    padding: 10px 12px;
+    text-align: center;
+    transition: all 200ms;
+    vertical-align: baseline;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    margin: 5px;
+}
+
+.custom-matcap-popup > input {
+    margin: 10px;
+}
+
+.matcaps-container > ul > li > img {
+    border-radius:100%;
+    padding: 5px;
+}
+.matcaps-container > ul {
+    max-width: 100%;
+}
+
+.matcaps-container {
+    max-width: 50%;
+}
+
+.models-container > ul > li > img {
+    border-radius:100%;
+    padding: 5px;
+}
+.models-container > ul {
+    max-width: 100%;
+}
+
+.models-container {
+    max-width: 50%;
+}
+
+.popup {
+    position: absolute;
+    width: fit-content;
+    bottom: 75px;
+    display: flex;
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    border: 1px solid black;
+    border-radius: 10px;
+    background: white;
+}
+.popup-container {
+    width:100%;
+    display: flex;
+    justify-content: center;
+
+}
+
+#settings-popup > div, button {
+    margin: 10px;
+}
+
+
+body {
+    background-color: #6495ED;
+    margin: 0;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+canvas {
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+.canvas-container {
+    justify-content: center;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    margin:auto;
+}
+
+.title-container {
+ display: flex;
+    justify-content: center;
+}
+.text-container {
+    position:absolute;
+    margin:0;
+    padding:0;
+    top:0;
+}

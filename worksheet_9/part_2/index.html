@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teapot with Projection Shadows</title>
+</head>
+<body>
+<button id="toggleTeapotMotion">Toggle Teapot Motion</button>
+<button id="toggleLightMotion">Toggle Light Motion</button>
+<canvas id="gl-canvas" width="800" height="600"></canvas>
+
+<script id="vertex-shader-ground" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec2 vTexCoord;
+    varying vec2 fTexCoord;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+        fTexCoord = vTexCoord;
+    }
+</script>
+
+<script id="fragment-shader-ground" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec2 fTexCoord;
+    uniform sampler2D texture;
+    uniform int isShadow;
+    uniform float visibility;
+
+    void main() {
+        if (isShadow == 1) {
+            // Black shadow
+            gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0)*visibility;
+        } else {
+            gl_FragColor = texture2D(texture, fTexCoord);
+        }
+    }
+</script>
+
+<script id="vertex-shader-teapot" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec3 vNormal;
+
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+    uniform mat3 normalMatrix;
+    uniform vec3 lightDirection;
+
+    varying vec4 fColor;
+
+    void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+
+        vec3 N = normalize(normalMatrix * vNormal);
+        vec3 L = normalize(lightDirection);
+        float diffuse = max(dot(N, L), 0.0);
+
+        float ambient = 0.2;
+        vec4 baseColor = vec4(0.8, 0.8, 0.8, 1.0); // Gray teapot
+        fColor = baseColor * (ambient + diffuse);
+    }
+</script>
+
+<script id="fragment-shader-teapot" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 fColor;
+    void main() {
+        gl_FragColor = fColor;
+    }
+</script>
+
+<script type="text/javascript" src="../../WebGL_Files/OBJParser.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>

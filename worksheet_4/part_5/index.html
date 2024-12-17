@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<a href="javascript:history.back()">Go Back</a><br>
+<h1>Can't simply get the specular to work properly</h1>
+<canvas id="gl-canvas"></canvas>
+<body>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    varying vec3 vNormal; // Pass interpolated normals to the fragment shader
+    varying vec3 vPositionEyeSpace; // Pass the vertex position in eye space
+
+    uniform mat4 modelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+    void main() {
+        // Transform the vertex position to eye space
+        vec4 positionEyeSpace = modelViewMatrix * vPosition;
+        vPositionEyeSpace = positionEyeSpace.xyz;
+
+        // Calculate the normal vector in object space
+        vNormal = normalize(vec3(vPosition));
+
+        // Transform the vertex to clip space
+        gl_Position = uProjectionMatrix * positionEyeSpace;
+    }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    varying vec3 vNormal;
+    varying vec3 vPositionEyeSpace;
+
+    uniform vec3 lightDirection; // Light direction in eye space
+    uniform vec4 ambientProduct;
+    uniform vec4 diffuseProduct;
+    uniform vec4 specularProduct;
+    uniform float shininess;
+
+    void main() {
+        // Normalize the interpolated normal
+        vec3 normal = normalize(vNormal);
+
+        // Compute the ambient component
+        vec4 ambient = ambientProduct;
+
+        // Compute the diffuse component
+        vec3 lightDir = normalize(-lightDirection);
+        float diffuseFactor = max(dot(normal, lightDir), 0.0);
+        vec4 diffuse = diffuseFactor * diffuseProduct;
+
+        // Compute the specular component
+        vec3 viewDir = normalize(vPositionEyeSpace);
+        vec3 reflectDir = reflect(-lightDir, normal);
+        float specularFactor = pow(max(dot(reflectDir, viewDir), 0.0), shininess);
+        vec4 specular = specularFactor * specularProduct;
+
+        // Combine the lighting components
+        vec4 finalColor = ambient + diffuse + specular;
+
+        gl_FragColor = finalColor;
+    }
+</script>
+
+<div>
+    <label for="ambient-slider">Ambient Intensity:</label>
+    <input id="ambient-slider" type="range" min="0" max="1" step="0.01" value="0.2">
+    <br>
+    <label for="diffuse-slider">Diffuse Intensity:</label>
+    <input id="diffuse-slider" type="range" min="0" max="1" step="0.01" value="1.0">
+    <br>
+    <label for="specular-slider">Specular Intensity:</label>
+    <input id="specular-slider" type="range" min="0" max="1" step="0.01" value="1.0">
+    <br>
+    <label for="shininess-slider">Shininess:</label>
+    <input id="shininess-slider" type="range" min="1" max="100" step="1" value="50">
+</div>
+<br>
+<button onclick="alterSubdivision(+1)">Increase</button>
+<button onclick="alterSubdivision(-1)">Decrease</button>
+</body>
+
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+
+<script type="text/javascript" src="main.js"></script>
+</html>

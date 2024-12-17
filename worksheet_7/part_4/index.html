@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cube Map with Normal Map</title>
+</head>
+<a href="javascript:history.back()">Go Back</a><br>
+<canvas id="gl-canvas"></canvas>
+<body>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec3 vNormal;
+    attribute vec2 vTexCoord;
+
+    uniform mat4 modelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    uniform mat4 Mtex;
+    uniform bool uIsBackground;
+
+    varying vec3 fTexCoord;
+    varying vec3 fPosition;
+    varying vec3 fNormal;
+    varying vec2 fUV;
+
+    void main() {
+        if (uIsBackground) {
+            gl_Position = vPosition;
+            vec4 dir = Mtex * vPosition;
+            fTexCoord = dir.xyz;
+            fPosition = vec3(0.0);
+            fNormal = vec3(0.0);
+            fUV = vec2(0.0);
+        } else {
+            fPosition = vPosition.xyz;
+            fNormal = normalize(vNormal);
+            fUV = vTexCoord;
+
+            vec4 pos = modelViewMatrix * vPosition;
+            gl_Position = uProjectionMatrix * pos;
+
+            vec4 dir = Mtex * pos;
+            fTexCoord = dir.xyz;
+        }
+    }
+</script>
+
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+
+    uniform samplerCube uCubeMap;
+    uniform sampler2D uNormalMap;
+    uniform bool uIsBackground;
+    uniform bool uReflective;
+    uniform bool uUseNormalMap;
+    uniform vec3 uEyePos;
+
+    varying vec3 fTexCoord;
+    varying vec3 fPosition;
+    varying vec3 fNormal;
+    varying vec2 fUV;
+
+    // Function to transform tangent-space normal to world-space normal
+    vec3 rotate_to_normal(vec3 n, vec3 v) {
+        float sgn_nz = sign(n.z + 1.0e-16);
+        float a = -1.0/(1.0 + abs(n.z));
+        float b = n.x*n.y*a;
+        return vec3(1.0 + n.x*n.x*a, b, -sgn_nz*n.x)*v.x
+             + vec3(sgn_nz*b, sgn_nz*(1.0 + n.y*n.y*a), -n.y)*v.y
+             + n*v.z;
+    }
+
+    void main() {
+        if (uIsBackground) {
+            vec3 dir = normalize(fTexCoord);
+            gl_FragColor = textureCube(uCubeMap, dir);
+        } else {
+            vec3 normal = normalize(fNormal);
+            vec3 viewDir = normalize(uEyePos - fPosition); // View direction
+
+            if (uReflective && uUseNormalMap) {
+                vec3 normalMap = texture2D(uNormalMap, fUV).rgb;
+                normalMap = normalMap * 2.0 - 1.0;
+                normal = normalize(rotate_to_normal(normal, normalMap));
+            }
+
+            vec3 reflectDir = reflect(-viewDir, normal);
+
+            vec4 envColor = textureCube(uCubeMap, reflectDir);
+
+            gl_FragColor = envColor;
+        }
+    }
+</script>
+
+<br>
+<button onclick="alterSubdivision(+1)">Increase</button>
+<button onclick="alterSubdivision(-1)">Decrease</button>
+</body>
+
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+
+<script type="text/javascript" src="main.js"></script>
+</html>

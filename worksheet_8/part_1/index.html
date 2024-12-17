@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebGL Scene with Shadows</title>
+</head>
+<body>
+<canvas id="gl-canvas" width="800" height="600"></canvas>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec2 vTexCoord;
+    varying vec2 fTexCoord;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 projectionMatrix;
+
+    void main() {
+        gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+        fTexCoord = vTexCoord;
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec2 fTexCoord;
+    uniform sampler2D texture;
+    uniform int isShadow;
+
+    void main() {
+        if (isShadow == 1) {
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Fully opaque red
+        } else {
+            gl_FragColor = texture2D(texture, fTexCoord);
+        }
+    }
+</script>
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>

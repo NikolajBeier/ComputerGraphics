@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MatCaps Model Viewer</title>
+</head>
+<body>
+
+<link type="text/css" rel="stylesheet" href="style.css" />
+
+<div class="title-container">
+  <h1>MatCap Model Viewer</h1>
+</div>
+<div class="text-container">
+  <a href="javascript:history.back()">Go Back</a>
+  <p>Computer Graphics Project</p>
+  <p>Made by Nikolaj Beier (S215814)</p>
+  <p>I recommend enabling corrected UVs<br>Settings -> Use Correct UV</p>
+  <p>Some models can take a few seconds!</p>
+  <p>MatCaps from <a href="https://github.com/nidorx/matcaps">GitHub<br></a>Download the repo for more MatCaps!</p>
+</div>
+
+<div class="canvas-container">
+  <canvas id="gl-canvas"></canvas>
+</div>
+<!-- Vertex Shader -->
+<script id="vertex-shader" type="x-shader/x-vertex">
+  attribute vec4 vPosition;
+  attribute vec3 vNormal;
+
+  uniform mat4 modelViewMatrix;
+  uniform mat4 projectionMatrix;
+  uniform mat3 normalMatrix;
+
+  varying vec3 fNormal;
+
+  void main() {
+      gl_Position = projectionMatrix * modelViewMatrix * vPosition;
+      fNormal = normalize(normalMatrix * vNormal);
+  }
+</script>
+
+<!-- Fragment Shader -->
+<script id="fragment-shader" type="x-shader/x-fragment">
+  precision mediump float;
+
+  uniform sampler2D matcapTexture;
+  varying vec3 fNormal;
+
+  uniform bool uvDisplay;
+  uniform bool uvInverted;
+
+  void main() {
+      vec3 N = normalize(fNormal);
+      vec2 uv = N.xy * 0.5 + 0.5;
+
+      if (uvInverted) {
+        uv = vec2(N.x, -N.y) * 0.5 + 0.5;
+      }
+
+      if(uvDisplay) {
+        gl_FragColor = vec4(uv, 0.0, 1.0);
+      } else {
+        vec4 matcapColor = texture2D(matcapTexture, uv);
+        gl_FragColor = matcapColor;
+      }
+  }
+</script>
+<br>
+
+
+
+
+<div class="buttons-container">
+<ul>
+  <li><button onclick="DisplayPopUp('matcaps')">MatCaps</button></li>
+  <li><button onclick="DisplayPopUp('custom-matcap')">Upload MatCap</button></li>
+  <li><button onclick="DisplayPopUp('models')">Models</button></li>
+  <li><button onclick="DisplayPopUp('settings')">Settings</button></li>
+</ul>
+</div>
+<div class="popup-container">
+  <div id="matcaps-popup" class="matcaps-container popup" style="visibility: hidden;">
+  <ul>
+    <li><img src="matcaps/mat1.png" onclick="setupMatcapTexture('matcaps/mat1.png')" /></li>
+    <li><img src="matcaps/mat2.png" onclick="setupMatcapTexture('matcaps/mat2.png')"/></li>
+    <li><img src="matcaps/mat3.png" onclick="setupMatcapTexture('matcaps/mat3.png')"/></li>
+    <li><img src="matcaps/mat4.png" onclick="setupMatcapTexture('matcaps/mat4.png')"/></li>
+    <li><img src="matcaps/mat5.png" onclick="setupMatcapTexture('matcaps/mat5.png')"/></li>
+    <li><img src="matcaps/mat6.png" onclick="setupMatcapTexture('matcaps/mat6.png')" /></li>
+    <li><img src="matcaps/mat7.png" onclick="setupMatcapTexture('matcaps/mat7.png')"/></li>
+    <li><img src="matcaps/mat8.png" onclick="setupMatcapTexture('matcaps/mat8.png')"/></li>
+    <li><img src="matcaps/mat9.png" onclick="setupMatcapTexture('matcaps/mat9.png')"/></li>
+    <li><img src="matcaps/mat10.png" onclick="setupMatcapTexture('matcaps/mat10.png')"/></li>
+    <li><img src="matcaps/mat11.png" onclick="setupMatcapTexture('matcaps/mat11.png')" /></li>
+    <li><img src="matcaps/mat12.png" onclick="setupMatcapTexture('matcaps/mat12.png')"/></li>
+    <li><img src="matcaps/mat13.png" onclick="setupMatcapTexture('matcaps/mat13.png')"/></li>
+    <li><img src="matcaps/mat14.png" onclick="setupMatcapTexture('matcaps/mat14.png')"/></li>
+    <li><img src="matcaps/mat15.png" onclick="setupMatcapTexture('matcaps/mat15.png')"/></li>
+
+  </ul>
+</div>
+  <div id="custom-matcap-popup" class="custom-matcap-popup popup" style="visibility: hidden;">
+    <input type="file" accept=".png" id="fileInput"/>
+  </div>
+<div id="models-popup" class="models-container popup" style="visibility: hidden;">
+  <ul>
+    <li><img src="icons/sphere.png" onclick="changeModel('sphere')" /></li>
+    <li><img src="icons/high-res-monkey.png" onclick="changeModel('high-res-monke')" /></li>
+    <li><img src="icons/torus.png" onclick="changeModel('torus')" /></li>
+    <li><img src="icons/low-poly-monkey.png" onclick="changeModel('monke')" /></li>
+    <li><img src="icons/teapot.png" onclick="changeModel('teapot')" /></li>
+    <li><img src="icons/porsche.png" onclick="changeModel('porsche')" /></li>
+  </ul>
+</div>
+<div id="settings-popup" class="popup" style="visibility: hidden;">
+  <button id="toggleMode">Toggle Wireframe</button>
+  <button id="uv-toggle">Display UV</button>
+  <button id="uv-invert">Use Corrected UV</button>
+  <button onclick="changeModel('unsmoothed-monke')">Un-smoothed Model</button>
+  <div style="display: flex; flex-direction: column;">
+    <label for="damping-range">Orbit Damping</label>
+    <input type=range min=0.85 max=1 step=0.01 value=0.9 id="damping-range" />
+  </div>
+  <div style="display: flex; flex-direction: column;">
+    <label for="bg-color-picker">Background</label>
+    <input id="bg-color-picker" type="color" value="#6495ED"/>
+  </div>
+</div>
+</div>
+
+<script type="text/javascript" src="../WebGL_Files/OBJParser.js"></script>
+<script type="text/javascript" src="../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../WebGL_Files/MV.js"></script>
+<script type="text/javascript" src="../WebGL_Files/quaternion.js"></script>
+<script type="text/javascript" src="main.js"></script>
+<script type="text/javascript" src="ui.js"></script>
+</body>
+</html>

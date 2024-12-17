@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<a href="javascript:history.back()">Go Back</a><br>
+<canvas id="gl-canvas"></canvas>
+<body>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec4 vColor;
+    varying vec4 fColor;
+    uniform mat4 modelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+
+   // Light direction (normalized)
+   const vec3 lightDir = normalize(vec3(0, 0, -1.0));
+
+   void main() {
+       gl_Position = uProjectionMatrix * modelViewMatrix * vPosition;
+
+       // Calculate the normal (normalize the vertex position for a sphere)
+       vec3 normal = normalize(vec3(vPosition));
+
+       // Calculate the diffuse reflection coefficient
+       float diffuse = max(dot(normal, lightDir), 0.0);
+
+       // Set vertex color based on diffuse reflection
+       fColor = 0.5 * vColor + vec4(diffuse, diffuse, diffuse, 1.0) * 1.0;
+   }
+
+</script> <script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 fColor;
+
+
+    void main() {
+      gl_FragColor = fColor;
+    }
+</script>
+
+<br>
+<button onclick="alterSubdivision(+1)">Increase</button>
+<button onclick="alterSubdivision(-1)">Decrease</button>
+</body>
+
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+
+<script type="text/javascript" src="main.js"></script>
+</html>

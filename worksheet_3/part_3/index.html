@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<a href="javascript:history.back()">Go Back</a><br>
+<body>
+<h1>List the transformation matrices that you used in Parts 1 and 2</h1>
+<h2>Part 1</h2>
+<h2>Model View Matrix</h2>
+<p>lookAt * translate(0.5, 0.5, 0.5)</p>
+<h2>Part 2</h2>
+<h3>Projection Matrix</h3>
+<p>perspective(fov, aspect, near, far)</p>
+<h2>Model View Matrix per cube</h2>
+<p>translate(x, y, z) * rotateX(X) * rotateY(Y)</p>
+<h1>For each cube, write down a formula showing how the matrices were concatenated to become the current transformation matrix that was used in the vertex shader</h1>
+<h2>Cube 1</h2>
+<p>projection * translate(-0.5, -0.5, -8)</p>
+<h2>Cube 2</h2>
+<p>projection * translate(-2, -0.5, -8) * rotateY(31)</p>
+<h2>Cube 3</h2>
+<p>projection * translate(1.5, -0.5, -8) * rotateX(-15) * rotateY(-15)</p>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="javascript:history.back()">Go Back</a><br>
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec4 vColor;
+    varying vec4 fColor;
+    uniform float uAngle;
+
+    void main() {
+        float c = cos(uAngle);
+        float s = sin(uAngle);
+
+        mat4 rotation = mat4(
+            c, -s, 0.0, 0.0,
+            s,  c, 0.0, 0.0,
+            0.0, 0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0, 1.0
+        );
+
+        gl_Position = rotation * vPosition;
+        fColor = vColor;
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+  precision mediump float;
+
+  void main() {
+    gl_FragColor = vec4(255, 255, 255, 1);
+  }
+</script>
+
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+
+<canvas id="gl-canvas"></canvas>
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>

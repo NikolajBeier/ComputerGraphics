@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive Drawing</title>
+</head>
+<body>
+<a href="javascript:history.back()">Go Back</a><br>
+
+<label for="clear-color">Canvas Color:</label>
+<select id="clear-color">
+    <option value="0,0,0,1">Black</option>
+    <option value="1,1,1,1">White</option>
+    <option value="1,0,0,1">Red</option>
+    <option value="0,1,0,1">Green</option>
+    <option value="0,0,1,1">Blue</option>
+</select>
+<br>
+
+<label for="point-color">Point Color:</label>
+<select id="point-color">
+    <option value="0,0,0,1">Black</option>
+    <option value="1,0,0,1">Red</option>
+    <option value="0,1,0,1">Green</option>
+    <option value="0,0,1,1">Blue</option>
+</select>
+<br>
+
+<button id="clear-canvas">Clear Canvas</button>
+<br>
+
+<script id="vertex-shader" type="x-shader/x-vertex">
+    attribute vec4 vPosition;
+    attribute vec4 vColor;
+    varying vec4 fColor;
+
+    void main() {
+      gl_Position = vPosition;
+      gl_PointSize = 10.0;
+      fColor = vColor;
+    }
+</script>
+<script id="fragment-shader" type="x-shader/x-fragment">
+    precision mediump float;
+    varying vec4 fColor;
+
+    void main() {
+      gl_FragColor = fColor;
+    }
+</script>
+
+<script type="text/javascript" src="../../WebGL_Files/webgl-utils.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/initShaders.js"></script>
+<script type="text/javascript" src="../../WebGL_Files/MV.js"></script>
+
+<canvas id="gl-canvas"></canvas>
+<script type="text/javascript" src="main.js"></script>
+</body>
+</html>
